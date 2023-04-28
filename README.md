@@ -1,2 +1,2 @@
 # algorithm-everyday
-每天一道算法题
+Byranb 的每日算法
