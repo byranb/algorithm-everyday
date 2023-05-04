@@ -12,47 +12,51 @@
 
 class TimeLimitedCache {
 
-    cacheTimer;
     cacheMap;
 
     constructor() {
-        this.cacheTimer = new Map();
         this.cacheMap = new Map();
     }
 
     set(key, value, duration) {
-        const flag = !!this.cacheMap.get(key);
-        if(flag) {
-            clearTimeout(this.cacheTimer.get(key));
-        }
-        this.cacheMap.set(key, value);
-        const timerOut = setTimeout(() => {
-            this.cacheMap.delete(key);
-        }, duration);
-        this.cacheTimer.set(key, timerOut);
-        return flag;
+        const nowDate = Date.now();
+        const live = (this.cacheMap.get(key)?.expires ?? 0) > nowDate;
+        this.cacheMap.set(key, { expires: nowDate + duration, value });
+        return live;
     }
 
     get(key) {
-        return this.cacheMap.get(key) ?? -1;
+        const nowDate = Date.now();
+        const live = (this.cacheMap.get(key).expires ?? 0) > nowDate;
+        if(live) {
+            return this.cacheMap.get(key).value ?? -1;
+        } else {
+            this.cacheMap.delete(key);
+            return -1;
+        }
     }
 
     count() {
+        const nowDate = Date.now();
+        for(const [key, value] of this.cacheMap) {
+            if(value.expires < nowDate) {
+                this.cacheMap.delete(key);
+            }
+        }
         return this.cacheMap.size;
     }
 }
 
 const cache = new TimeLimitedCache();
 console.log(cache.set(1, 1, 1000)); // false
-console.log(cache.set(1, 1, 1000)); // true
+console.log(cache.set(1, 1, 2000)); // true
 console.log(cache.set(2, 2, 1000)); // false
 console.log(cache.get(1)); // 1
 console.log(cache.get(2)); // 2
 console.log(cache.count()); // 2
 setTimeout(() => {
-    console.log(cache.get(1)); // -1
-    console.log(cache.get(2)); // 2
+    console.log(cache.get(1)); // 1
+    console.log(cache.get(2)); // -1
     console.log(cache.count()); // 1
 }, 1500);
-
 
