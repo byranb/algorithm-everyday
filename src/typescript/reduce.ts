@@ -6,10 +6,6 @@
 // 如果数组的长度为 0，它应该返回 init 的值。
 //
 // 请你在不使用内置数组方法的 Array.reduce 前提下解决这个问题。
-//
-// 来源：力扣（LeetCode）
-// 链接：https://leetcode.cn/problems/array-reduce-transformation
-// 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
 
 type Fn = (accum: number, curr: number) => number
 

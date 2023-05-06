@@ -1,15 +1,15 @@
 // 防抖函数
-type F = (...p: any[]) => any
+type Fun = (...p: any[]) => any
 
-function debounce(fn: F, t: number): F {
-    let timer: any = null;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+function debounce(fn: Fun, t: number): Fun {
+    let timer: number | null = null;
     return function(...args) {
         if (timer) {
             clearTimeout(timer);
         }
         timer = setTimeout(() => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             fn.apply(this, args);
             timer = null;
         }, t);
